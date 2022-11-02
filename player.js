@@ -17,7 +17,6 @@ const songs = [
     artists: [
       "Yo Yo Honey Singh",
       "Chirantan Bhatt",
-      "Manj Musik"
     ],
     thumbnail: "./images/teriMeri.jpg",
     file: "./Music/Teri Meri Kahaani.mp3"
@@ -86,17 +85,14 @@ let songIndex = 0;
 let isSongPlaying = false;
 let song = document.getElementById("song");
 let prevSongIndex = -1;
+let displaySongList = false;
 
 function playPauseSong() {
-  console.log(prevSongIndex);
-  console.log(songIndex);
-  
   if (prevSongIndex != songIndex) {
     song.pause();
     isSongPlaying = false;
     $(`#${prevSongIndex}`).attr("src", "./images/play-solid.svg");
     song.src = songs[songIndex].file;
-    console.log(song);
   }
   
   if (!isSongPlaying) {
@@ -116,8 +112,8 @@ function playPauseSong() {
 }
 
 function loadSongDetails(idx) {
-  prevSongIndex = songIndex; //0
-  songIndex = idx; //1
+  prevSongIndex = songIndex; 
+  songIndex = idx;
 
   if (songIndex > 9)
     songIndex = 0;
@@ -131,29 +127,20 @@ function loadSongDetails(idx) {
   playPauseSong();
 }
 
-function displaySongsList() {
-  $("#main").css({ "height": "500px" });
-  $("#header, #thumbnail-container, #slider-controls, #player-controls").css("display", "none");
-  $("#select-song").css("display","block");
-  // $("#main").css("box-shadow","-3px 3px 5px");
-  $("button").remove();
-  let ulElement = `<ul id=songs-list> 
-    <li id="close-songs-list"> 
-      <img src="./images/xmark-solid.svg"/>
-    </li>
-  </ul>`
+function displaySongsList() {  
+  let ulElement = `<ul id=songs-list> </ul>`
   $("#select-song").append(ulElement);
 
   let counter = 0;
-  $.each(songs, function (index, song) {
-    let liElement = `<li> 
-          <img src="${song.thumbnail}"/>
-          <div class="details">
-            <h3> ${song.title} </h3>
-            <p> ${song.artists.toString()} </p>
-          </div>
-          <img id=${counter} onclick="loadSongDetails(this.id)" src="./images/play-solid.svg"/>
-        </li>`
+  $.each(songs, function (index, s) {
+    let liElement = `
+    <li id=${counter} onclick="loadSongDetails(this.id)"> 
+      <img src="${s.thumbnail}"/>
+      <div class="details">
+        <h3> ${s.title} </h3>
+        <p> ${s.artists.toString()} </p>
+      </div>
+    </li>`
     $("#songs-list").append(liElement);
     counter++;
   });
@@ -170,9 +157,26 @@ function playPrevSong() {
 
 $(document).ready(start);
 
+
 function start() {
-  $("#select-song button, #menu-bar").click(function() {
-    displaySongsList();
+
+  displaySongsList();
+  $("#menu-bar").click(function() {
+    if (!displaySongList) {
+      displaySongList = true;
+      $("#select-song").css("display","block");
+      $("#main").css({ "height": "500px" });
+      $("#thumbnail-container, #slider-controls, #player-controls").css("display", "none");
+      $("#header p").text("MUSIC LIST");
+    }
+    else {
+      displaySongList = false;
+      $("#select-song").css("display","none");
+      $("#slider-controls, #player-controls").css("display", "flex");
+      $("#thumbnail-container").css("display","block");
+      $("#header p").text("MUSIC PLAYER");
+      $("#main").css("height","auto");
+    }
   });
 
   $("#play-song").click(function() {
