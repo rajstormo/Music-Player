@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Music Player</title>
+  <link rel="stylesheet" href="./style.css">
+  <script
+  src="https://code.jquery.com/jquery-3.6.1.js"
+  integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI="
+  crossorigin="anonymous">
+  </script>
+</head>
+<body>
+
+  <main id="main">
+    <audio src="./Music/8 parche.mp3" id="song"></audio>
+    <header id="header" class="margin_m">
+      <img id="menu-bar" src="./images/bars-solid.svg" alt="">
+      <p>MUSIC PLAYER</p>
+      <img src="./images/moon-solid.svg" alt="">
+    </header>
+
+    <section id="select-song">
+      <button> Choose a song to play </button>
+    </section>
+
+    <section id="thumbnail-container" class="margin_m">
+      <img id="image" src="">
+      <div class="details margin_m">
+        <h3 id="song-name"></h3>
+        <p id="artist-name"></p>
+      </div>
+    </section>
+    
+    <section id="slider-controls">
+      <p>start Time</p>
+      <div class="slider">
+        <input type="range" min="0" max="" value="0" id="progress-bar">
+      </div>
+      <p>start Time</p>
+    </section>
+
+    <section id="player-controls">
+      <img id="prev-song" src="./images/backward-step-solid.svg" alt="backward-img">
+      <img id="play-song" src="./images/play-solid.svg" alt="play-img">
+      <img id="next-song" src="./images/forward-step-solid.svg" alt="forward-img">
+    </section>
+  </main>
+
+  <script src="./player.js"></script>
+</body>
+</html>
