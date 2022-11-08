@@ -123,7 +123,8 @@ h3,p {
 }
 
 #progress-bar::-webkit-slider-thumb {
-  -webkit-appearance: none; 
+  -webkit-appearance: none;
+  appearance: none;
   background:#000;
   border-radius: 50%;
   cursor:pointer;
