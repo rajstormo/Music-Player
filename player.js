@@ -13,13 +13,12 @@ const songs = [
     file: "./Music/Amplifier.mp3"
   },
   {
-    title: "Teri Meri Kahani",
+    title: "Kalla Changa",
     artists: [
-      "Yo Yo Honey Singh",
-      "Chirantan Bhatt",
+      "Ninja"
     ],
-    thumbnail: "./images/teriMeri.jpg",
-    file: "./Music/Teri Meri Kahaani.mp3"
+    thumbnail: "./images/kalla-changa.jpg",
+    file: "./Music/Kalla Changa.mp3"
   },
   {
     title: "Dance Like",
@@ -80,115 +79,190 @@ const songs = [
   },
 ]
 
-
+//variables
 let songIndex = 0;
 let isSongPlaying = false;
 let song = document.getElementById("song");
+let nightMode = false;
 let prevSongIndex = -1;
 let displaySongList = false;
+let progressBar = document.getElementById("progress-bar");
 
+//methods
 function playPauseSong() {
   if (prevSongIndex != songIndex) {
     song.pause();
     isSongPlaying = false;
-    $(`#${prevSongIndex}`).attr("src", "./images/play-solid.svg");
     song.src = songs[songIndex].file;
   }
-  
+
+  console.log(song.duration);
+
   if (!isSongPlaying) {
-    console.log("playing");
     isSongPlaying = true;
-    $(`#${songIndex}`).attr("src", "./images/pause-solid.svg");
-    $("#play-song").attr("src","./images/pause-solid.svg");
+    $("#play-song").attr("src", "./images/pause-solid.svg");
     song.play();
   }
   else {
     isSongPlaying = false;
-    $(`#${songIndex}`).attr("src", "./images/play-solid.svg");
-    $("#play-song").attr("src","./images/play-solid.svg");
-    $("#image").css("transform","scale(1)");
+    $("#play-song").attr("src", "./images/play-solid.svg");
     song.pause();
   }
 }
 
-function loadSongDetails(idx) {
-  prevSongIndex = songIndex; 
-  songIndex = idx;
-
-  if (songIndex > 9)
-    songIndex = 0;
-  if (songIndex < 0)
-    songIndex = 9;
-
-  $("#thumbnail-container #image, #background").attr("src", songs[songIndex].thumbnail);
-  $("#song-name").text(songs[songIndex].title);
-  $("#artist-name").text(songs[songIndex].artists.toString());
-  
-  playPauseSong();
-}
-
-function displaySongsList() {  
+function displaySongsList() {
   let ulElement = `<ul id=songs-list> </ul>`
   $("#select-song").append(ulElement);
 
   let counter = 0;
   $.each(songs, function (index, s) {
     let liElement = `
-    <li id=${counter} onclick="loadSongDetails(this.id)"> 
-      <img src="${s.thumbnail}"/>
-      <div class="details">
-        <h3> ${s.title} </h3>
-        <p> ${s.artists.toString()} </p>
-      </div>
-    </li>`
+  <li id=${counter} onclick="loadSongDetails(this.id); changeBackground()"> 
+    <img src="${s.thumbnail}"/>
+    <div class="details">
+      <h3> ${s.title} </h3>
+      <p> ${s.artists.toString()} </p>
+    </div>
+  </li>`
     $("#songs-list").append(liElement);
     counter++;
   });
 }
 
+function changeBackground() {
+  $(`#${songIndex} h3, #${songIndex} p`).css("color","#00A97F");  
+
+  if (!nightMode) 
+    $(`#${prevSongIndex} h3, #${prevSongIndex} p`).css("color","#000");  
+  else 
+    $(`#${prevSongIndex} h3, #${prevSongIndex} p`).css("color","#fff");  
+}
+
+function loadSongDetails(idx) {
+  prevSongIndex = songIndex;
+  songIndex = idx;
+
+  if (songIndex > 9)
+    songIndex = 0;
+  if (songIndex < 0)
+    songIndex = 9;
+  
+  let imageUrl = songs[songIndex].thumbnail; 
+  $("#thumbnail-container #image, #background").attr("src", imageUrl);
+  $("body").css("background",`url(${imageUrl}) no-repeat center center/cover`);
+  $("#song-name").text(songs[songIndex].title); 
+  $("#artist-name").text(songs[songIndex].artists.toString());
+  
+  playPauseSong();
+}
+
+function showHideDisplaySongList() {
+  if (!displaySongList) {
+    displaySongList = true;
+    $("#select-song").css("display", "block");
+    $("#main").css({ "height": "500px" });
+    $("#thumbnail-container, #slider-controls, #player-controls").css("display", "none");
+    $("#header").css("margin-bottom",0); 
+  }
+  else {
+    displaySongList = false;
+    $("#select-song").css("display", "none");
+    $("#slider-controls, #player-controls").css("display", "flex");
+    $("#thumbnail-container").css("display", "block");
+    $("#header h2").text("MUSIC PLAYER");
+    $("#main").css("height", "auto");
+    $("#header").css("margin-bottom",20); 
+  }
+}
+
 function playNextSong() {
-  loadSongDetails(songIndex+1);
+  loadSongDetails(songIndex + 1);
+  changeBackground();
 }
 
 function playPrevSong() {
-  loadSongDetails(songIndex-1);
+  loadSongDetails(songIndex - 1);
+}
+
+function updateProgressBar() {
+  progressBar.max = song.duration;
+  progressBar.value = song.currentTime;
+  $("#current-time").text(formatTime(Math.floor(song.currentTime)));
+  $("#duration-time").text((formatTime(Math.floor(song.duration))));
+}
+
+function changeProgressBar() {
+  song.currentTime = progressBar.value;
+}
+
+function formatTime(seconds) {
+  let min = Math.floor((seconds / 60));
+  let sec = Math.floor(seconds - (min * 60));
+  if (sec < 10) {
+    sec = `0${sec}`;
+  };
+  return `${min}:${sec}`;
+};
+
+function switchMode() {
+  if (!nightMode) {
+    nightMode = true;
+    $("#switch-mode").attr("src","./images/sun-solid.svg");
+    $("#main").css("background-image","linear-gradient(to bottom, #303030, #252525, #1b1b1b, #111111, #000000)");
+    $("#progress-bar").css("background-color","#fff");
+    $("#main h3, #main p").css("color","#fff");
+    $(`#${songIndex} h3, #${songIndex} p`).css("color","#00A97F");  
+    $("#prev-song, #play-song, #next-song").css("filter","invert(100%)");    
+  } 
+  else {
+    nightMode = false;
+    $("#switch-mode").attr("src","./images/moon-solid.svg");
+    $("#main").css("background-image","linear-gradient(to top,#eee,#eee)");
+    $("#progress-bar").css("background-color","#000");
+    $("#main h3, #main p").css("color","#000");
+    $(`#${songIndex} h3, #${songIndex} p`).css("color","#00A97F");  
+    $("#prev-song, #play-song, #next-song").css("filter","invert(0)");
+  }
 }
 
 
 $(document).ready(start);
 
-
 function start() {
-
+  //Display the songs list in background(initially hidden)
   displaySongsList();
+
+  //Events 
   $("#menu-bar").click(function() {
-    if (!displaySongList) {
-      displaySongList = true;
-      $("#select-song").css("display","block");
-      $("#main").css({ "height": "500px" });
-      $("#thumbnail-container, #slider-controls, #player-controls").css("display", "none");
-      $("#header p").text("MUSIC LIST");
-    }
-    else {
-      displaySongList = false;
-      $("#select-song").css("display","none");
-      $("#slider-controls, #player-controls").css("display", "flex");
-      $("#thumbnail-container").css("display","block");
-      $("#header p").text("MUSIC PLAYER");
-      $("#main").css("height","auto");
-    }
+    showHideDisplaySongList();
   });
 
-  $("#play-song").click(function() {
+  $("#play-song").click(function () {
+    $("li:first-child h3, li:first-child p").css({"color":"#00A97F"});
     loadSongDetails(songIndex);
   });
 
-  $("#next-song").click(function() {
+  $("#next-song").click(function () {
     playNextSong();
   })
 
-  $("#prev-song").click(function() {
+  $("#prev-song").click(function () {
     playPrevSong();
   })
 
-}
+  $("#progress-bar").change(function () {
+    changeProgressBar();
+  });
+
+  //switch b/w day and night mode
+  $("#header #switch-mode").click(function() {
+    switchMode();
+  });
+
+  //when the current song ends playing, play the next Song
+  song.addEventListener("ended", function () {
+    playNextSong();
+  });
+
+  setInterval(updateProgressBar, 500);
+} 
