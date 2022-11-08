@@ -96,8 +96,6 @@ function playPauseSong() {
     song.src = songs[songIndex].file;
   }
 
-  console.log(song.duration);
-
   if (!isSongPlaying) {
     isSongPlaying = true;
     $("#play-song").attr("src", "./images/pause-solid.svg");
@@ -130,12 +128,16 @@ function displaySongsList() {
 }
 
 function changeBackground() {
-  $(`#${songIndex} h3, #${songIndex} p`).css("color","#00A97F");  
 
-  if (!nightMode) 
-    $(`#${prevSongIndex} h3, #${prevSongIndex} p`).css("color","#000");  
-  else 
-    $(`#${prevSongIndex} h3, #${prevSongIndex} p`).css("color","#fff");  
+  $(`#${songIndex} h3, #${songIndex} p`).css("color", "#00A97F");
+
+  // if the prevSongIndex and songIndex are same, I don't want the highlighted color to vanish(this is the logic for that)
+  if (prevSongIndex != songIndex) {
+    if (!nightMode)
+      $(`#${prevSongIndex} h3, #${prevSongIndex} p`).css("color", "#000");
+    else
+      $(`#${prevSongIndex} h3, #${prevSongIndex} p`).css("color", "#fff");
+  }
 }
 
 function loadSongDetails(idx) {
@@ -146,13 +148,13 @@ function loadSongDetails(idx) {
     songIndex = 0;
   if (songIndex < 0)
     songIndex = 9;
-  
-  let imageUrl = songs[songIndex].thumbnail; 
-  $("#thumbnail-container #image, #background").attr("src", imageUrl);
-  $("body").css("background",`url(${imageUrl}) no-repeat center center/cover`);
-  $("#song-name").text(songs[songIndex].title); 
+
+  let imageUrl = songs[songIndex].thumbnail;
+  $("#thumbnail-container #image").attr("src", imageUrl);
+  $("body").css("background", `url(${imageUrl}) no-repeat center center/cover`);
+  $("#song-name").text(songs[songIndex].title);
   $("#artist-name").text(songs[songIndex].artists.toString());
-  
+
   playPauseSong();
 }
 
@@ -162,7 +164,7 @@ function showHideDisplaySongList() {
     $("#select-song").css("display", "block");
     $("#main").css({ "height": "500px" });
     $("#thumbnail-container, #slider-controls, #player-controls").css("display", "none");
-    $("#header").css("margin-bottom",0); 
+    $("#header").css("margin-bottom", 0);
   }
   else {
     displaySongList = false;
@@ -171,7 +173,7 @@ function showHideDisplaySongList() {
     $("#thumbnail-container").css("display", "block");
     $("#header h2").text("MUSIC PLAYER");
     $("#main").css("height", "auto");
-    $("#header").css("margin-bottom",20); 
+    $("#header").css("margin-bottom", 20);
   }
 }
 
@@ -182,6 +184,7 @@ function playNextSong() {
 
 function playPrevSong() {
   loadSongDetails(songIndex - 1);
+  changeBackground();
 }
 
 function updateProgressBar() {
@@ -207,21 +210,25 @@ function formatTime(seconds) {
 function switchMode() {
   if (!nightMode) {
     nightMode = true;
-    $("#switch-mode").attr("src","./images/sun-solid.svg");
-    $("#main").css("background-image","linear-gradient(to bottom, #303030, #252525, #1b1b1b, #111111, #000000)");
-    $("#progress-bar").css("background-color","#fff");
-    $("#main h3, #main p").css("color","#fff");
-    $(`#${songIndex} h3, #${songIndex} p`).css("color","#00A97F");  
-    $("#prev-song, #play-song, #next-song").css("filter","invert(100%)");    
-  } 
+    $("#switch-mode").attr("src", "./images/sun-solid.svg");
+    $("#main").css("background-image", "linear-gradient(to bottom, #303030, #252525, #1b1b1b, #111111, #000000)");
+    $("#progress-bar").css("background-color", "#fff");
+    $("#main h3, #main p").css("color", "#fff");
+    $(`#${songIndex} h3, #${songIndex} p`).css("color", "#00A97F");
+    $("#prev-song, #play-song, #next-song").css("filter", "invert(100%)");
+    $("#progress-bar").removeClass("for-day-mode");
+    $("#progress-bar").addClass("for-night-mode");
+  }
   else {
     nightMode = false;
-    $("#switch-mode").attr("src","./images/moon-solid.svg");
-    $("#main").css("background-image","linear-gradient(to top,#eee,#eee)");
-    $("#progress-bar").css("background-color","#000");
-    $("#main h3, #main p").css("color","#000");
-    $(`#${songIndex} h3, #${songIndex} p`).css("color","#00A97F");  
-    $("#prev-song, #play-song, #next-song").css("filter","invert(0)");
+    $("#switch-mode").attr("src", "./images/moon-solid.svg");
+    $("#main").css("background-image", "linear-gradient(to top,#eee,#eee)");
+    $("#progress-bar").css("background-color", "#000");
+    $("#main h3, #main p").css("color", "#000");
+    $(`#${songIndex} h3, #${songIndex} p`).css("color", "#00A97F");
+    $("#prev-song, #play-song, #next-song").css("filter", "invert(0)");
+    $("#progress-bar").removeClass("for-night-mode");
+    $("#progress-bar").addClass("for-day-mode");
   }
 }
 
@@ -233,12 +240,12 @@ function start() {
   displaySongsList();
 
   //Events 
-  $("#menu-bar").click(function() {
+  $("#menu-bar").click(function () {
     showHideDisplaySongList();
   });
 
   $("#play-song").click(function () {
-    $("li:first-child h3, li:first-child p").css({"color":"#00A97F"});
+    $("li:first-child h3, li:first-child p").css({ "color": "#00A97F" });
     loadSongDetails(songIndex);
   });
 
@@ -255,7 +262,7 @@ function start() {
   });
 
   //switch b/w day and night mode
-  $("#header #switch-mode").click(function() {
+  $("#header #switch-mode").click(function () {
     switchMode();
   });
 
