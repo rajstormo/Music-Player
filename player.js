@@ -115,7 +115,7 @@ function displaySongsList() {
   let counter = 0;
   $.each(songs, function (index, s) {
     let liElement = `
-  <li id=${counter} onclick="loadSongDetails(this.id); changeBackground()"> 
+  <li id=${counter} onclick="loadSongDetails(parseInt(this.id)); changeBackground()"> 
     <img src="${s.thumbnail}"/>
     <div class="details">
       <h3> ${s.title} </h3>
@@ -143,7 +143,7 @@ function changeBackground() {
 function loadSongDetails(idx) {
   prevSongIndex = songIndex;
   songIndex = idx;
-
+    
   if (songIndex > 9)
     songIndex = 0;
   if (songIndex < 0)
@@ -231,7 +231,6 @@ function switchMode() {
     $("#progress-bar").addClass("for-day-mode");
   }
 }
-
 
 $(document).ready(start);
 
